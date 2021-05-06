@@ -1,0 +1,64 @@
+.af_msg_verify .af_success {
+  color: #13d11c;
+  background-color: #e3dede;
+  width: 50%;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.af_msg_verify .af_error {
+  color: #d91111;
+  background-color: #e3dede;
+  width: 50%;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.af_change_cli_info {
+  color: #000;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.af_add_user_form button,
+#af_add_user_advertiser_btn {
+  color: #fff;
+  background-color: #007cba;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.af_add_user_form {
+  display: grid;
+  grid-template-columns: 20% 70%;
+  margin-bottom: 10px;
+}
+
+.af_add_user_form.af_add_user_form.af_msg_verify {
+  display: grid;
+  grid-template-columns: 100%;
+  margin-bottom: 15px;
+}
+
+.af_add_user_form input {
+  width: 50%;
+}
+
+#af_add_user_agency_btn {
+  color: #fff;
+  background-color: #404242;
+  border: none;
+  padding: 9px 20px;
+  cursor: not-allowed;
+  margin-left: 20%;
+}
+
+#af_add_user_agency_btn.af_active_btn {
+  background-color: #007cba;
+  cursor: pointer;
+}
+
+#af_add_user_advertiser_btn {
+  margin-left: 20%;
+}
