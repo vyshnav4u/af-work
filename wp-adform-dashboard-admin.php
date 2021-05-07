@@ -858,7 +858,134 @@ function af_report_stat( $af_tok_client_id, $af_tok_client_secert, $af_post_body
 add_action( "wp_footer", "my_msg" );
 
 function my_msg(){
-	echo "<h1>asas</h1>";
+
+	$param = get_option( "af_tbl_website_stat" );
+	$af_time_stamp = $param;
+	$now_time = gmdate("Y/m/d/H:i:s");
+	$af_time_stamp_std = strtotime( $af_time_stamp );
+	$now_time_std = strtotime( $now_time );
+	$diff = $now_time_std - $af_time_stamp_std;
+	
+	if( $diff > 3 ){
+		
+		global $wpdb;
+		$af_results_client_id = $wpdb->get_results( "SELECT DISTINCT meta_value FROM {$wpdb->prefix}usermeta WHERE meta_key = 'af_client_id'", ARRAY_A  );
+		$af_results_client_secert = $wpdb->get_results( "SELECT DISTINCT meta_value FROM {$wpdb->prefix}usermeta WHERE meta_key = 'af_client_secert'", ARRAY_A  );
+
+		for( $i=0; $i< sizeof( $af_results_client_id ) ; $i++ ){
+			print_r($af_results_client_id );
+			$af_client_id = $af_results_client_id[$i]["meta_value"];
+			$af_client_secert = $af_results_client_secert[$i]["meta_value"];
+			echo "%%%";
+			echo $af_client_id;
+			echo $af_client_secert;
+			$table_name = $wpdb->prefix . 'adform_website_stat';
+			$af_website_post_body = '{
+				"dimensions": [
+				"campaign","campaignID","client","clientID","rtbDomain"
+				],
+				"metrics": [
+				"clicks","impressions"
+				],
+				"filter": {
+				"date": {"from":"yesterday", "to":"today"}
+				}
+				}';
+			$af_website_data_arr = af_report_stat( $af_client_id, $af_client_secert, $af_website_post_body );
+
+			
+			$table_name_device_type = $wpdb->prefix . 'adform_device_type_stat';
+			$af_deviceType_post_body = '{
+				"dimensions": [
+				"campaign","campaignID","client","clientID","deviceType"
+				],
+				"metrics": [
+				"clicks","impressions"
+				],
+				"filter": {
+				"date": "thisYear"
+				}
+				}';
+			$af_stat_data_deviceType_arr = af_report_stat( $af_client_id, $af_client_secert, $af_deviceType_post_body );
+
+			$table_name_os = $wpdb->prefix . 'adform_os_stat';
+			$af_os_post_body = '{
+				"dimensions": [
+				"campaign","campaignID","client","clientID","operatingSystem"
+				],
+				"metrics": [
+				"clicks","impressions"
+				],
+				"filter": {
+				"date": "thisYear"
+				}
+				}';
+			$af_stat_data_os_arr = af_report_stat( $af_client_id, $af_client_secert, $af_os_post_body );
+
+			$table_name_reportStat = $wpdb->prefix . 'adform_report_stat';
+			$af_reportStat_post_body1 = '{
+				"dimensions": [
+				"campaign","campaignID","client","clientID","date"
+				],
+				"metrics": [
+				"clicks","impressions","ctr","ecpm","ecpc","ecpa","rtbWinRate","rtbBids","viewImpressions","viewImpressionsPercent"
+				],
+				"filter": {
+				"date": "thisYear"
+				}
+				}';
+
+				$af_reportStat_post_body2 = '{
+				"dimensions": [
+				"campaign","campaignID","client","clientID","date"
+				],
+				"metrics": [
+				"cost","avgEngagementTime","avgViewabilityTime","conversions","pageviews","bounceRate"
+				],
+				"filter": {
+				"date": "thisYear"
+				}
+				}';
+
+
+			$af_reportStat_arr1 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body1 );
+			$af_reportStat_arr2 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body2 );
+			
+			echo "<pre>";
+			//print_r( $af_website_data_arr["reportData"]["rows"] );
+			echo "</pre>";
+			echo "<h1> as </h1>";
+			if( $af_website_data_arr != "error" &&  array_key_exists( "reportData" , $af_website_data_arr ) ){
+				
+				$af_website_data_db = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}adform_website_stat", ARRAY_A  );
+				echo "<pre>";
+				//print_r($af_website_data_db );
+				echo "</pre>";
+
+				for( $i=0; $i< sizeof( $af_website_data_arr["reportData"]["rows"] ); $i++){
+
+					for( $j=0; $j< sizeof( $af_website_data_db ); $j++ ){
+
+						if( in_array( $af_website_data_arr["reportData"]["rows"][$i][1], $af_website_data_db[$j] ) &&  in_array( $af_website_data_arr["reportData"]["rows"][$i][7], $af_website_data_db[$j] ) ){
+							//update
+						}
+						else{
+							//insert
+							
+						}
+					}
+				}
+
+			}
+
+
+		}
+	
+	}
+	else
+	{
+		echo "king ranganr";
+	}
 }
 
  
