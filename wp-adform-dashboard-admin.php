@@ -906,7 +906,7 @@ function my_msg(){
 				"date": "thisYear"
 				}
 				}';
-			$af_stat_data_deviceType_arr = af_report_stat( $af_client_id, $af_client_secert, $af_deviceType_post_body );
+			//$af_stat_data_deviceType_arr = af_report_stat( $af_client_id, $af_client_secert, $af_deviceType_post_body );
 
 			$table_name_os = $wpdb->prefix . 'adform_os_stat';
 			$af_os_post_body = '{
@@ -920,7 +920,7 @@ function my_msg(){
 				"date": "thisYear"
 				}
 				}';
-			$af_stat_data_os_arr = af_report_stat( $af_client_id, $af_client_secert, $af_os_post_body );
+			//$af_stat_data_os_arr = af_report_stat( $af_client_id, $af_client_secert, $af_os_post_body );
 
 			$table_name_reportStat = $wpdb->prefix . 'adform_report_stat';
 			$af_reportStat_post_body1 = '{
@@ -948,32 +948,53 @@ function my_msg(){
 				}';
 
 
-			$af_reportStat_arr1 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body1 );
-			$af_reportStat_arr2 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body2 );
+			//$af_reportStat_arr1 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body1 );
+			//$af_reportStat_arr2 = af_report_stat( $af_client_id, $af_client_secert, $af_reportStat_post_body2 );
 			
 			echo "<pre>";
-			//print_r( $af_website_data_arr["reportData"]["rows"] );
+			print_r( $af_website_data_arr["reportData"]["rows"] );
 			echo "</pre>";
-			echo "<h1> as </h1>";
+			echo "<h1> asasas </h1>";
 			if( $af_website_data_arr != "error" &&  array_key_exists( "reportData" , $af_website_data_arr ) ){
 				
-				$af_website_data_db = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}adform_website_stat", ARRAY_A  );
+				$af_website_data_db = $wpdb->get_results( "SELECT campaign_id,impression,click,rtb_website FROM {$wpdb->prefix}adform_website_stat", ARRAY_A  );
+				
 				echo "<pre>";
-				//print_r($af_website_data_db );
+				print_r($af_website_data_db );
 				echo "</pre>";
 
 				for( $i=0; $i< sizeof( $af_website_data_arr["reportData"]["rows"] ); $i++){
 
+					$b_lfag = 0;
+
 					for( $j=0; $j< sizeof( $af_website_data_db ); $j++ ){
 
-						if( in_array( $af_website_data_arr["reportData"]["rows"][$i][1], $af_website_data_db[$j] ) &&  in_array( $af_website_data_arr["reportData"]["rows"][$i][7], $af_website_data_db[$j] ) ){
-							//update
-						}
-						else{
-							//insert
+						
+
+						//check post data is present in database
+						if( in_array( $af_website_data_arr["reportData"]["rows"][$i][1], $af_website_data_db[$j] ) && in_array( $af_website_data_arr["reportData"]["rows"][$i][4], $af_website_data_db[$j] ) ){
+							//check data have changes
+							if( $af_website_data_arr["reportData"]["rows"][$i][6] != $af_website_data_db[$j]["impression"] || $af_website_data_arr["reportData"]["rows"][$i][5] != $af_website_data_db[$j]["click"]  ){
+								$b_lfag = 1;
+								break;
+							}
+							
 							
 						}
+						
+						
 					}
+
+					if( $b_lfag == 1 ){
+
+						// update exsiting databse field with new impression and clicks
+					}
+					else{
+						//insert api data as new field
+						
+					}
+
+
 				}
 
 			}
